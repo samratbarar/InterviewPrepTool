@@ -1,0 +1,1537 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ResumeAI - AI Resume-Based Interview Tool (GL Bajaj BCC351)</title>
+  <style>
+    :root {
+      --bg: #0b0d14;
+      --surface: #131722;
+      --surface-glass: rgba(19, 23, 34, 0.92);
+      --surface-hover: #1b2133;
+      --border: rgba(255, 255, 255, 0.08);
+      --border-accent: rgba(99, 102, 241, 0.3);
+      --primary: #6366f1;
+      --primary-hover: #4f46e5;
+      --primary-glow: rgba(99, 102, 241, 0.25);
+      --accent: #06b6d4;
+      --accent-glow: rgba(6, 182, 212, 0.2);
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --text-dim: #64748b;
+      --radius: 12px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: var(--bg);
+      background-image: radial-gradient(circle at 10% 20%, #151a2d 0%, #0b0d14 90%);
+      background-attachment: fixed;
+      color: var(--text);
+      min-height: 100vh;
+      line-height: 1.6;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 16px 20px 80px;
+    }
+
+    /* Academic Project Header Bar */
+    .college-banner {
+      background: linear-gradient(135deg, rgba(99, 102, 241, 0.12), rgba(6, 182, 212, 0.08));
+      border: 1px solid var(--border-accent);
+      border-radius: var(--radius);
+      padding: 12px 18px;
+      margin-bottom: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      font-size: 0.82rem;
+    }
+    .college-banner .badge {
+      background: var(--primary);
+      color: #fff;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      letter-spacing: 0.02em;
+    }
+    .college-banner .meta-item {
+      color: var(--text-muted);
+    }
+    .college-banner strong {
+      color: var(--text);
+    }
+
+    /* Navbar */
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 22px;
+      background: var(--surface-glass);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      margin-bottom: 24px;
+      backdrop-filter: blur(12px);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+    }
+
+    .brand-badge {
+      width: 42px;
+      height: 42px;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 1.1rem;
+      color: #fff;
+      box-shadow: 0 0 16px var(--primary-glow);
+    }
+
+    .brand-title {
+      font-weight: 800;
+      font-size: 1.22rem;
+      letter-spacing: -0.02em;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .nav-btn {
+      background: transparent;
+      border: 1px solid transparent;
+      color: var(--text-muted);
+      font-weight: 600;
+      font-size: 0.88rem;
+      padding: 8px 14px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .nav-btn:hover {
+      color: var(--text);
+      background: var(--surface-hover);
+    }
+
+    .nav-btn.active {
+      color: #fff;
+      background: var(--primary);
+    }
+
+    .db-pill {
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 5px 12px;
+      border-radius: 20px;
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid rgba(16, 185, 129, 0.4);
+      color: #34d399;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .api-pill {
+      background: rgba(245, 158, 11, 0.12);
+      border: 1px solid rgba(245, 158, 11, 0.35);
+      color: #fbbf24;
+      font-size: 0.78rem;
+      font-weight: 700;
+      padding: 5px 12px;
+      border-radius: 20px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+    .api-pill.live {
+      background: rgba(16, 185, 129, 0.12);
+      border-color: rgba(16, 185, 129, 0.4);
+      color: #34d399;
+    }
+
+    /* Cards */
+    .card {
+      background: var(--surface-glass);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 28px;
+      box-shadow: 0 12px 36px rgba(0, 0, 0, 0.4);
+      margin-bottom: 24px;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    label {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    input, select, textarea {
+      background: #0e111a;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      font-family: inherit;
+      font-size: 0.92rem;
+      padding: 10px 12px;
+      width: 100%;
+      outline: none;
+      transition: all 0.2s;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px var(--primary-glow);
+    }
+
+    .chips-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 6px;
+    }
+
+    .chip {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      font-size: 0.8rem;
+      padding: 6px 14px;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .chip:hover, .chip.selected {
+      background: var(--primary-glow);
+      border-color: var(--primary);
+      color: #fff;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary), var(--primary-hover));
+      color: #fff;
+      border: none;
+      font-weight: 700;
+      font-size: 1rem;
+      padding: 12px 24px;
+      border-radius: 10px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.2s;
+    }
+
+    .btn-primary:hover {
+      background: linear-gradient(135deg, #4f46e5, #4338ca);
+      transform: translateY(-1px);
+    }
+
+    .btn-primary:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .btn-secondary {
+      background: #111422;
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-weight: 600;
+      font-size: 0.85rem;
+      padding: 8px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+
+    .btn-secondary:hover {
+      background: var(--surface-hover);
+    }
+
+    /* Progress & Timer */
+    .progress-bar {
+      height: 6px;
+      background: #0e111a;
+      border-radius: 3px;
+      overflow: hidden;
+      margin-bottom: 20px;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(to right, var(--primary), var(--accent));
+      width: 33%;
+      transition: width 0.3s;
+    }
+
+    .timer-badge {
+      font-family: monospace;
+      font-size: 0.95rem;
+      font-weight: 800;
+      padding: 6px 14px;
+      border-radius: 8px;
+      background: #0e111a;
+      border: 1px solid var(--border);
+      color: var(--accent);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .timer-badge.urgent {
+      color: #ef4444;
+      border-color: rgba(239, 68, 68, 0.5);
+      background: rgba(239, 68, 68, 0.12);
+      animation: pulse 1s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.6; }
+    }
+
+    .question-box {
+      background: #0e111a;
+      border-left: 4px solid var(--primary);
+      border-radius: 10px;
+      padding: 22px;
+      margin-bottom: 20px;
+    }
+
+    .category-badge {
+      font-size: 0.75rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      padding: 4px 10px;
+      border-radius: 6px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .cat-tech {
+      background: rgba(99, 102, 241, 0.18);
+      border: 1px solid rgba(99, 102, 241, 0.4);
+      color: #a5b4fc;
+    }
+    .cat-star {
+      background: rgba(16, 185, 129, 0.18);
+      border: 1px solid rgba(16, 185, 129, 0.4);
+      color: #6ee7b7;
+    }
+    .cat-gap {
+      background: rgba(245, 158, 11, 0.18);
+      border: 1px solid rgba(245, 158, 11, 0.4);
+      color: #fde68a;
+    }
+
+    .resume-source-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(6, 182, 212, 0.12);
+      border: 1px solid rgba(6, 182, 212, 0.3);
+      color: #38bdf8;
+      font-size: 0.78rem;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 6px;
+      margin-bottom: 12px;
+    }
+
+    .mic-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .record-btn {
+      background: #111422;
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 8px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+    .record-btn.recording {
+      background: rgba(239, 68, 68, 0.2);
+      border-color: var(--danger);
+      color: #fca5a5;
+    }
+
+    .equalizer {
+      display: flex;
+      align-items: center;
+      gap: 3px;
+      height: 16px;
+    }
+    .equalizer-bar {
+      width: 3px;
+      background: var(--danger);
+      border-radius: 2px;
+      animation: eqBounce 0.8s ease-in-out infinite alternate;
+    }
+    .equalizer-bar:nth-child(2) { animation-delay: 0.2s; }
+    .equalizer-bar:nth-child(3) { animation-delay: 0.4s; }
+    .equalizer-bar:nth-child(4) { animation-delay: 0.1s; }
+    @keyframes eqBounce {
+      0% { height: 4px; }
+      100% { height: 16px; }
+    }
+
+    .strength-meter {
+      background: #0e111a;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .strength-circle {
+      width: 58px;
+      height: 58px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.15rem;
+      font-weight: 900;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      color: #fff;
+      box-shadow: 0 0 12px var(--primary-glow);
+    }
+
+    .weak-areas-card {
+      background: rgba(245, 158, 11, 0.06);
+      border: 1px solid rgba(245, 158, 11, 0.3);
+      border-radius: 12px;
+      padding: 18px;
+      margin-bottom: 24px;
+    }
+
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.75);
+      backdrop-filter: blur(4px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      z-index: 1000;
+    }
+
+    .modal-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 26px;
+      max-width: 500px;
+      width: 100%;
+    }
+
+    .hidden { display: none !important; }
+
+    @media print {
+      body { background: #fff !important; color: #000 !important; }
+      .navbar, .btn-primary, .btn-secondary, .mic-row, .college-banner, footer { display: none !important; }
+      .card { border: none !important; box-shadow: none !important; padding: 0 !important; background: #fff !important; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Academic Project Header Bar -->
+    <div class="college-banner">
+      <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+        <span class="badge">BCC351 Mini Project-I</span>
+        <span><strong>GL Bajaj Institute of Technology & Management</strong> · CSE (Data Science)</span>
+      </div>
+      <div style="display: flex; gap: 14px; flex-wrap: wrap;">
+        <span class="meta-item">Team: <strong>Samrat Barar, Rishabh Thakur, Samir Kumar, Samriddhi Sarva</strong></span>
+        <span class="meta-item">Guide: <strong>Shameem Khan</strong></span>
+      </div>
+    </div>
+
+    <!-- Navbar -->
+    <nav class="navbar">
+      <div class="brand" onclick="navigateTo('setup')">
+        <div class="brand-badge">AI</div>
+        <div>
+          <div class="brand-title">ResumeAI Interviewer</div>
+          <div style="font-size: 0.72rem; color: var(--text-muted)">Resume Parsing · Company Alignment · Gap Analysis</div>
+        </div>
+      </div>
+
+      <div class="nav-links">
+        <button id="nav-interview" class="nav-btn active" onclick="navigateTo('setup')">Mock Interview</button>
+        <button id="nav-history" class="nav-btn" onclick="navigateTo('history')">SQLite DB History (<span id="history-count">0</span>)</button>
+        <div class="db-pill" id="db-status-pill">
+          <span>●</span>
+          <span id="db-status-text">SQLite DB Connected</span>
+        </div>
+        <button id="api-pill-btn" class="api-pill" onclick="openApiModal()">
+          <span id="api-pill-text">Demo Mode (Add Gemini Key)</span>
+        </button>
+      </div>
+    </nav>
+
+    <!-- 1. SETUP VIEW -->
+    <section id="view-setup" class="card">
+      <div style="text-align: center; margin-bottom: 22px;">
+        <span style="background: var(--primary-glow); color: #a5b4fc; font-size: 0.78rem; font-weight: 700; padding: 4px 12px; border-radius: 20px;">
+          ✦ AI-Powered Resume-Based Interview Preparation (MP-1)
+        </span>
+        <h1 style="font-size: 2rem; font-weight: 800; margin-top: 10px; margin-bottom: 6px;">
+          Prepare With Confidence for Your Target Role
+        </h1>
+        <p style="color: var(--text-muted); font-size: 0.92rem; max-width: 680px; margin: 0 auto;">
+          Upload your resume and enter the target company & job description. The AI generates tailored <strong>Technical</strong>, <strong>Behavioral (STAR)</strong>, and <strong>Resume-Gap</strong> questions with timed countdown simulation.
+        </p>
+      </div>
+
+      <!-- 1-Click Sample Resumes -->
+      <div style="margin-bottom: 18px;">
+        <span style="font-size: 0.8rem; font-weight: 700; color: var(--text-muted); margin-bottom: 6px; display: block;">
+          ⚡ 1-Click Profiles (Auto-fills Resume & Target Company):
+        </span>
+        <div class="chips-row">
+          <span id="sample-tab-fullstack" class="chip selected" onclick="loadSampleResume('fullstack')">💻 Full Stack Developer (Amazon)</span>
+          <span id="sample-tab-datascience" class="chip" onclick="loadSampleResume('datascience')">📊 Data Science / ML (Google)</span>
+          <span id="sample-tab-java" class="chip" onclick="loadSampleResume('java')">☕ Java Backend (Microsoft)</span>
+        </div>
+      </div>
+
+      <!-- Target Company & Role & JD -->
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Target Company</label>
+          <input id="setup-company" type="text" value="Amazon" placeholder="e.g. Amazon, Google, TCS, Microsoft" />
+        </div>
+        <div class="form-group">
+          <label>Target Role Domain</label>
+          <input id="setup-role" type="text" value="Full Stack Developer" placeholder="e.g. Full Stack Developer, Data Scientist" />
+        </div>
+        <div class="form-group">
+          <label>Time Limit Per Question</label>
+          <select id="setup-time-limit">
+            <option value="60">60 Seconds (Rapid Fire)</option>
+            <option value="90" selected>90 Seconds (Standard Mock)</option>
+            <option value="120">120 Seconds (Detailed Defense)</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Question Count</label>
+          <select id="setup-num">
+            <option value="3" selected>3 Questions (Quick Mock ~ 5m)</option>
+            <option value="5">5 Questions (Comprehensive ~ 10m)</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Resume Textbox with file picker -->
+      <div class="form-group" style="margin-bottom: 16px;">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <label>Candidate Resume Content</label>
+          <label class="btn-secondary" style="padding: 4px 10px; font-size: 0.78rem; cursor: pointer;">
+            📁 Upload Resume (.txt/.md/.pdf)
+            <input type="file" id="resume-file-input" accept=".txt,.md,.pdf,.doc,.docx" onchange="handleFileUpload(event)" style="display: none;" />
+          </label>
+        </div>
+        <textarea id="setup-resume-input" rows="7" placeholder="Paste resume projects and skills here..." style="font-family: monospace; font-size: 0.86rem;"></textarea>
+      </div>
+
+      <!-- Job Description (for Resume-Gap Analysis) -->
+      <div class="form-group" style="margin-bottom: 22px;">
+        <label>Job Description / Target Qualifications (Used for Resume-Gap Analysis)</label>
+        <textarea id="setup-jd-input" rows="3" placeholder="Paste JD or requirements (e.g. Docker, Microservices, Redis, AWS) to probe unlisted skills..." style="font-size: 0.86rem;"></textarea>
+      </div>
+
+      <button id="btn-start-interview" class="btn-primary" onclick="startInterviewSession()" style="width: 100%;">
+        Start Timed Mock Interview →
+      </button>
+    </section>
+
+    <!-- 2. SESSION VIEW -->
+    <section id="view-session" class="card hidden">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 10px;">
+        <div>
+          <span id="session-q-counter" style="font-size: 0.8rem; color: var(--text-muted); font-weight: 600;">Question 1 of 3</span>
+          <h2 id="session-role-heading" style="font-size: 1.25rem; font-weight: 700;">Full Stack Developer Interview</h2>
+        </div>
+        <div style="display: flex; gap: 10px; align-items: center;">
+          <div id="session-timer-pill" class="timer-badge">
+            ⏱ 01:30 Remaining
+          </div>
+          <button class="btn-secondary" onclick="navigateTo('setup')" style="font-size: 0.78rem; padding: 6px 12px;">Exit</button>
+        </div>
+      </div>
+
+      <div class="progress-bar">
+        <div id="session-progress-fill" class="progress-fill"></div>
+      </div>
+
+      <!-- Question Card -->
+      <div class="question-box">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
+          <div style="display: flex; gap: 8px; align-items: center;">
+            <span id="session-q-category-badge" class="category-badge cat-tech">
+              Technical
+            </span>
+            <span id="session-q-difficulty" style="font-size: 0.75rem; color: var(--text-dim); font-weight: 600;">
+              Medium
+            </span>
+          </div>
+          <div style="display: flex; gap: 8px;">
+            <button id="btn-hint" class="btn-secondary" onclick="toggleHint()" style="font-size: 0.78rem; padding: 4px 10px; color: var(--warning);">
+              💡 Hint
+            </button>
+            <button class="btn-secondary" onclick="speakCurrentQuestion()" style="font-size: 0.78rem; padding: 4px 10px;">
+              🔊 Listen
+            </button>
+          </div>
+        </div>
+
+        <div id="session-resume-badge" class="resume-source-badge">
+          📄 From Your Resume: DevConnect Social Network
+        </div>
+
+        <div id="session-q-text" style="font-size: 1.22rem; font-weight: 700; color: #fff; margin-bottom: 10px; line-height: 1.5;">
+          Question loading...
+        </div>
+
+        <div id="session-hint-text" class="hidden" style="background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.3); padding: 8px 12px; border-radius: 6px; font-size: 0.82rem; color: #fde68a;">
+          <strong>Hint:</strong> Focus on how you structured the architecture and handled edge cases.
+        </div>
+      </div>
+
+      <!-- Answer Input Area -->
+      <div class="mic-row">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <button id="btn-record-mic" class="record-btn" onclick="toggleMicRecording()">
+            🎙️ Speak Answer (Mic)
+          </button>
+          <div id="equalizer-wrapper" class="hidden" style="display: flex; align-items: center; gap: 6px;">
+            <div class="equalizer">
+              <span class="equalizer-bar"></span>
+              <span class="equalizer-bar"></span>
+              <span class="equalizer-bar"></span>
+              <span class="equalizer-bar"></span>
+            </div>
+            <span style="font-size: 0.78rem; color: #f87171; font-weight: 600;">Recording Voice...</span>
+          </div>
+        </div>
+
+        <span style="font-size: 0.82rem; color: var(--text-muted);">
+          Word Count: <strong id="word-count-num">0</strong>
+        </span>
+      </div>
+
+      <textarea id="session-answer-input" rows="6" placeholder="Type or speak your answer. Be specific about technologies, architectural decisions, and trade-offs..." oninput="updateWordCount()"></textarea>
+
+      <!-- Action buttons -->
+      <div id="session-action-row" style="display: flex; justify-content: space-between; align-items: center; margin-top: 14px;">
+        <button class="btn-secondary" onclick="skipCurrentQuestion()" style="color: var(--text-muted);">
+          ⏭ Skip Question
+        </button>
+        <div style="display: flex; gap: 10px;">
+          <button class="btn-secondary" onclick="clearAnswerInput()">Clear</button>
+          <button id="btn-submit-answer" class="btn-primary" onclick="submitAnswerForGrading()">
+            Submit & Evaluate Answer
+          </button>
+        </div>
+      </div>
+
+      <!-- Instant Evaluation Card -->
+      <div id="session-eval-card" class="hidden" style="background: #0e111a; border: 1px solid var(--border); border-radius: 12px; padding: 20px; margin-top: 20px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; flex-wrap: wrap; gap: 10px;">
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <div class="strength-circle" id="eval-strength-circle">74%</div>
+            <div>
+              <div style="font-weight: 800; font-size: 1.05rem;" id="eval-strength-label">Answer Strength: 74%</div>
+              <div style="font-size: 0.78rem; color: var(--text-muted);" id="eval-score-text">Score: 7.5 / 10</div>
+            </div>
+          </div>
+          <button id="btn-next-question" class="btn-primary" onclick="proceedToNextQuestion()" style="padding: 8px 18px;">
+            Next Question →
+          </button>
+        </div>
+
+        <p id="eval-feedback-text" style="color: #e2e8f0; font-size: 0.92rem; margin-bottom: 12px; line-height: 1.5;"></p>
+
+        <!-- Missing / Vague Points -->
+        <div id="eval-missing-box" style="background: rgba(239, 68, 68, 0.08); border-left: 3px solid var(--danger); padding: 10px 14px; border-radius: 6px; font-size: 0.85rem; color: #fca5a5; margin-bottom: 12px;">
+          <strong>Areas for Improvement / Missing Points:</strong>
+          <span id="eval-missing-text">None</span>
+        </div>
+
+        <!-- Model Answer -->
+        <div style="background: rgba(6, 182, 212, 0.08); border-left: 3px solid var(--accent); border-radius: 6px; padding: 12px 14px;">
+          <strong style="color: var(--accent); font-size: 0.82rem;">💡 Ideal High-Scoring Answer:</strong>
+          <p id="eval-model-answer" style="font-size: 0.85rem; color: #cbd5e1; margin-top: 4px; line-height: 1.5;"></p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. REPORT VIEW -->
+    <section id="view-report" class="card hidden">
+      <div style="text-align: center; margin-bottom: 24px;">
+        <span class="badge" style="background: var(--primary); color: #fff; padding: 4px 12px; border-radius: 20px; font-size: 0.78rem;">
+          Interview Evaluation Scorecard
+        </span>
+        <h1 style="font-size: 2rem; font-weight: 800; margin-top: 8px;" id="report-title">
+          Mock Interview Report
+        </h1>
+        <p style="color: var(--text-muted); font-size: 0.9rem;" id="report-subtitle">
+          Candidate performance evaluated and permanently stored in SQLite database.
+        </p>
+      </div>
+
+      <!-- Scoreboard Summary -->
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 24px;">
+        <div style="background: #0e111a; border: 1px solid var(--border); border-radius: 12px; padding: 18px; text-align: center;">
+          <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 4px;">Overall Score</div>
+          <div style="font-size: 2.2rem; font-weight: 900; color: #38bdf8;" id="report-score">8.0 / 10</div>
+        </div>
+        <div style="background: #0e111a; border: 1px solid var(--border); border-radius: 12px; padding: 18px; text-align: center;">
+          <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 4px;">Answer Strength</div>
+          <div style="font-size: 2.2rem; font-weight: 900; color: #34d399;" id="report-strength">80%</div>
+        </div>
+        <div style="background: #0e111a; border: 1px solid var(--border); border-radius: 12px; padding: 18px; text-align: center;">
+          <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 4px;">Questions Completed</div>
+          <div style="font-size: 2.2rem; font-weight: 900; color: #a78bfa;" id="report-count">3 / 3</div>
+        </div>
+      </div>
+
+      <!-- Action Row -->
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
+        <h3 style="font-size: 1.15rem; font-weight: 700;">Question Breakdown & AI Feedback</h3>
+        <div style="display: flex; gap: 10px;">
+          <button class="btn-secondary" onclick="window.print()">🖨️ Print / Export PDF</button>
+          <button class="btn-primary" onclick="navigateTo('setup')">Start New Interview</button>
+        </div>
+      </div>
+
+      <div id="report-questions-list"></div>
+    </section>
+
+    <!-- 4. HISTORY VIEW (SQLite Database) -->
+    <section id="view-history" class="card hidden">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
+        <div>
+          <h2 style="font-size: 1.5rem; font-weight: 800;">SQLite Database Interview History</h2>
+          <p style="font-size: 0.85rem; color: var(--text-muted);">
+            All mock interviews, answer strengths, and gap analysis results stored in <code>backend/database.sqlite</code>
+          </p>
+        </div>
+        <div style="display: flex; gap: 10px;">
+          <button class="btn-secondary" onclick="fetchDatabaseHistory()">🔄 Refresh</button>
+          <button class="btn-secondary" onclick="clearDatabaseHistory()" style="color: #f87171;">🗑 Clear All</button>
+          <button class="btn-primary" onclick="navigateTo('setup')">+ New Mock</button>
+        </div>
+      </div>
+
+      <!-- Weak Areas Analytics Box -->
+      <div id="weak-areas-panel" class="weak-areas-card">
+        <h3 style="font-size: 1rem; font-weight: 700; color: #fde68a; margin-bottom: 6px;">
+          ⚠️ Recurring Weak Areas & Gaps (Across Sessions)
+        </h3>
+        <p style="font-size: 0.82rem; color: var(--text-muted); margin-bottom: 10px;">
+          Skills and architectural topics where your answer strength was lowest:
+        </p>
+        <div id="weak-areas-list" class="chips-row">
+          <span class="chip" style="border-color: rgba(245, 158, 11, 0.4); color: #fde68a;">Cache Invalidation & Redis TTL</span>
+          <span class="chip" style="border-color: rgba(245, 158, 11, 0.4); color: #fde68a;">Docker Containerization (Resume Gap)</span>
+          <span class="chip" style="border-color: rgba(245, 158, 11, 0.4); color: #fde68a;">Conflict Resolution in STAR Format</span>
+        </div>
+      </div>
+
+      <div id="history-container">
+        <div style="text-align: center; color: var(--text-muted); padding: 40px 0;">Loading SQLite database records...</div>
+      </div>
+    </section>
+
+    <!-- API Key Modal -->
+    <div id="modal-apikey" class="modal-overlay hidden">
+      <div class="modal-box">
+        <h3 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 10px;">Gemini AI API Key</h3>
+        <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 16px;">
+          Enter your free Google Gemini API key to enable live AI resume question generation and grading. Leave empty to use the built-in demo model.
+        </p>
+        <input id="input-api-key" type="password" placeholder="AIzaSy..." style="margin-bottom: 16px;" />
+        <div style="display: flex; justify-content: flex-end; gap: 10px;">
+          <button class="btn-secondary" onclick="setDemoMode()">Use Demo Mode</button>
+          <button class="btn-primary" onclick="saveApiKey()">Save API Key</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Sample Profiles aligned with GL Bajaj BCC351 Mini Project-1
+    const SAMPLE_PROFILES = {
+      fullstack: {
+        company: 'Amazon',
+        role: 'Full Stack Developer',
+        jd: `Required Qualifications:
+- 0-2 years experience with React.js, Node.js, Express, and MongoDB.
+- Experience with real-time systems (WebSockets / Socket.io) and Redis caching.
+- Familiarity with Docker containerization and Microservices is a strong plus.`,
+        resume: `AMIT SHARMA
+B.Tech Computer Science & Engineering | CGPA: 8.4/10
+
+TECHNICAL SKILLS:
+- Languages: JavaScript (ES6+), TypeScript, Java, HTML5, CSS3
+- Frontend: React.js, Redux Toolkit, Next.js, Tailwind CSS
+- Backend: Node.js, Express.js, RESTful APIs, JWT Authentication
+- Databases: MongoDB, PostgreSQL, Redis Caching
+- Tools: Git, Postman
+
+PROJECTS:
+1. DevConnect - Developer Social Network & Code Collaboration Platform
+- Built full-stack platform with real-time chat using Socket.io and stored chat histories in MongoDB with indexing.
+- Implemented secure JWT authentication and password hashing with bcrypt.
+- Reduced API response times by 35% through Redis caching on popular developer feeds.
+
+2. ShopEasy - E-Commerce Web Application
+- Developed responsive shopping application with product catalogs, shopping cart, and order management.
+- Integrated Stripe Payment Gateway in test mode for secure credit card checkout.
+- Implemented Redux Toolkit for centralized client-side state management across product filters and carts.`
+      },
+
+      datascience: {
+        company: 'Google',
+        role: 'Data Scientist / ML Engineer',
+        jd: `Required Qualifications:
+- Proficiency in Python, Pandas, NumPy, Scikit-learn, and SQL.
+- Strong practical knowledge of classification algorithms, hyperparameter tuning, and class imbalance (SMOTE).
+- Experience deploying predictive machine learning APIs using FastAPI and Docker.`,
+        resume: `PRIYA VERMA
+B.Tech Data Science & AI | CGPA: 8.7/10
+
+TECHNICAL SKILLS:
+- Languages: Python, SQL, R
+- ML/AI: Scikit-learn, TensorFlow, Keras, NumPy, Pandas, Matplotlib
+- Databases: PostgreSQL, BigQuery, MySQL
+- Tools: Jupyter Notebook, Tableau, FastAPI
+
+PROJECTS:
+1. Customer Churn Prediction Engine
+- Developed classification pipeline using Scikit-Learn to predict telecom subscriber churn with 88% accuracy.
+- Handled class imbalance using SMOTE and tuned hyperparameters via GridSearchCV across Random Forest and XGBoost.
+- Deployed prediction API using FastAPI.
+
+2. Automated Document Classifier
+- Fine-tuned NLP transformer model for multi-class classification across 10,000+ support tickets.`
+      },
+
+      java: {
+        company: 'Microsoft',
+        role: 'Java Backend Engineer',
+        jd: `Required Qualifications:
+- Strong core Java (8/11/17), multithreading, and Spring Boot framework.
+- Experience with event-driven architecture (Apache Kafka / RabbitMQ) and PostgreSQL.
+- Understanding of distributed transaction handling and circuit breaker patterns.`,
+        resume: `ROHIT GUPTA
+B.Tech CSE | CGPA: 8.2/10
+
+TECHNICAL SKILLS:
+- Languages: Java 17, SQL, Python
+- Backend: Spring Boot, Spring Data JPA, Hibernate, REST APIs
+- Messaging: Apache Kafka, RabbitMQ
+- Databases: PostgreSQL, MySQL, Redis
+- Tools: Maven, Git, JUnit 5, Mockito
+
+PROJECTS:
+1. BankEase - High-Throughput Core Banking Microservice
+- Built Spring Boot service processing 1,200 transactions/sec using Kafka asynchronous events.
+- Enforced idempotency and ACID transaction management in PostgreSQL.`
+      }
+    };
+
+    // Global State
+    let apiKey = localStorage.getItem('gemini_api_key') || '';
+    let currentSessionId = null;
+    let sessionQuestions = [];
+    let currentQIndex = 0;
+    let sessionResults = [];
+    let currentEvaluation = null;
+
+    // Timer state
+    let questionTimeLimit = 90;
+    let timerRemaining = 90;
+    let timerInterval = null;
+
+    // Speech state
+    let recognition = null;
+    let isRecording = false;
+
+    // Lifecycle
+    window.addEventListener('DOMContentLoaded', () => {
+      loadSampleResume('fullstack');
+      initSpeechRecognition();
+      updateApiPill();
+      checkBackendConnection();
+      fetchDatabaseHistory();
+    });
+
+    function navigateTo(viewName) {
+      ['setup', 'session', 'report', 'history'].forEach(v => {
+        const el = document.getElementById(`view-${v}`);
+        if (el) el.classList.toggle('hidden', v !== viewName);
+      });
+
+      document.getElementById('nav-interview').classList.toggle('active', viewName === 'setup' || viewName === 'session' || viewName === 'report');
+      document.getElementById('nav-history').classList.toggle('active', viewName === 'history');
+
+      if (viewName === 'history') {
+        fetchDatabaseHistory();
+        fetchWeakAreas();
+      }
+    }
+
+    function loadSampleResume(type) {
+      ['fullstack', 'datascience', 'java'].forEach(t => {
+        const tab = document.getElementById(`sample-tab-${t}`);
+        if (tab) tab.classList.toggle('selected', t === type);
+      });
+
+      const profile = SAMPLE_PROFILES[type];
+      if (profile) {
+        document.getElementById('setup-company').value = profile.company;
+        document.getElementById('setup-role').value = profile.role;
+        document.getElementById('setup-jd-input').value = profile.jd;
+        document.getElementById('setup-resume-input').value = profile.resume;
+      }
+    }
+
+    function handleFileUpload(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        document.getElementById('setup-resume-input').value = event.target.result;
+      };
+      reader.readAsText(file);
+    }
+
+    async function checkBackendConnection() {
+      try {
+        const res = await fetch('http://localhost:5000/api/health');
+        const data = await res.json();
+        if (data.status === 'ok') {
+          document.getElementById('db-status-pill').style.display = 'inline-flex';
+          document.getElementById('db-status-text').textContent = 'SQLite DB Connected';
+        }
+      } catch (err) {
+        document.getElementById('db-status-text').textContent = 'Local Mode (Port 5000 Offline)';
+      }
+    }
+
+    // Start Interview Session
+    async function startInterviewSession() {
+      const resumeText = document.getElementById('setup-resume-input').value.trim();
+      const targetCompany = document.getElementById('setup-company').value.trim() || 'Amazon';
+      const role = document.getElementById('setup-role').value.trim() || 'Software Engineer';
+      const jobDescription = document.getElementById('setup-jd-input').value.trim();
+      const numQuestions = parseInt(document.getElementById('setup-num').value, 10);
+      questionTimeLimit = parseInt(document.getElementById('setup-time-limit').value, 10) || 90;
+
+      if (!resumeText) {
+        alert('Please paste or upload a resume to proceed!');
+        return;
+      }
+
+      const btn = document.getElementById('btn-start-interview');
+      btn.textContent = 'Analyzing Resume & Generating Questions...';
+      btn.disabled = true;
+
+      let loadedFromBackend = false;
+      try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 4000);
+
+        // Upload resume to SQLite backend
+        const upRes = await fetch('http://localhost:5000/api/resume/upload', {
+          method: 'POST',
+          signal: controller.signal,
+          headers: { 'Content-Type': 'application/json', ...(apiKey ? { 'x-gemini-api-key': apiKey } : {}) },
+          body: JSON.stringify({ resumeText })
+        });
+        const upData = await upRes.json();
+        const resumeId = upData.resumeId || null;
+
+        // Start session with target company and JD
+        const startRes = await fetch('http://localhost:5000/api/interview/start', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', ...(apiKey ? { 'x-gemini-api-key': apiKey } : {}) },
+          body: JSON.stringify({
+            resumeId,
+            resumeText,
+            targetCompany,
+            inferredRole: role,
+            jobDescription,
+            timeLimitSeconds: questionTimeLimit,
+            numQuestions
+          })
+        });
+        clearTimeout(timeoutId);
+
+        if (startRes.ok) {
+          const data = await startRes.json();
+          if (data.success && data.questions && data.questions.length > 0) {
+            sessionQuestions = data.questions;
+            currentSessionId = data.sessionId;
+            loadedFromBackend = true;
+          }
+        }
+      } catch (err) {
+        console.warn('Backend note, using fallback questions:', err);
+      }
+
+      if (!loadedFromBackend) {
+        // High quality fallback questions with 3 distinct categories
+        sessionQuestions = [
+          {
+            question: `In your DevConnect project, you implemented real-time chat with Socket.io and MongoDB. For ${targetCompany}'s scale, how did you structure your socket room events and prevent connection memory leaks?`,
+            category: "Technical",
+            resumeSource: "DevConnect Social Network",
+            difficulty: "Medium",
+            hint: "Walk through room joining, event listeners cleanup on disconnect, and MongoDB message pagination."
+          },
+          {
+            question: `Tell me about a time during your ShopEasy project when you faced a critical bug or production bottleneck right before a deadline. How did you diagnose it and communicate with your team under pressure?`,
+            category: "Behavioral",
+            resumeSource: "ShopEasy E-Commerce App",
+            difficulty: "Medium",
+            hint: "Use the STAR format: Situation, Task, Action you took, and measurable Result."
+          },
+          {
+            question: `The job requirements for ${targetCompany} emphasize Docker containerization and Microservices, but your resume emphasizes monolithic Node.js. How would you containerize your DevConnect backend for multi-container deployment?`,
+            category: "Resume-Gap",
+            resumeSource: "Target JD vs Resume Skills Gap",
+            difficulty: "Hard",
+            hint: "Explain writing a multi-stage Dockerfile, docker-compose for MongoDB and Redis, and environment isolation."
+          }
+        ];
+      }
+
+      currentQIndex = 0;
+      sessionResults = [];
+      btn.textContent = 'Start Timed Mock Interview →';
+      btn.disabled = false;
+
+      loadCurrentQuestion();
+      navigateTo('session');
+    }
+
+    function loadCurrentQuestion() {
+      const q = sessionQuestions[currentQIndex];
+      const total = sessionQuestions.length;
+
+      document.getElementById('session-q-counter').textContent = `Question ${currentQIndex + 1} of ${total}`;
+      document.getElementById('session-role-heading').textContent = `${document.getElementById('setup-company').value} · ${document.getElementById('setup-role').value}`;
+      document.getElementById('session-progress-fill').style.width = `${((currentQIndex + 1) / total) * 100}%`;
+
+      // Category badge
+      const catBadge = document.getElementById('session-q-category-badge');
+      const cat = q.category || 'Technical';
+      catBadge.textContent = cat === 'Behavioral' ? 'Behavioral (STAR)' : cat === 'Resume-Gap' ? 'Resume-Gap Analysis' : 'Technical Defense';
+      catBadge.className = `category-badge ${cat === 'Behavioral' ? 'cat-star' : cat === 'Resume-Gap' ? 'cat-gap' : 'cat-tech'}`;
+
+      document.getElementById('session-q-difficulty').textContent = q.difficulty || 'Medium';
+      document.getElementById('session-resume-badge').textContent = `📄 Tested from: ${q.resumeSource || 'Resume Claim'}`;
+      document.getElementById('session-q-text').textContent = q.question;
+      document.getElementById('session-hint-text').textContent = `Hint: ${q.hint || 'Walk through your hands-on implementation details.'}`;
+      document.getElementById('session-hint-text').classList.add('hidden');
+
+      document.getElementById('session-answer-input').value = '';
+      document.getElementById('word-count-num').textContent = '0';
+      document.getElementById('session-eval-card').classList.add('hidden');
+      document.getElementById('session-action-row').classList.remove('hidden');
+
+      startCountdownTimer();
+    }
+
+    // Countdown Timer per Question
+    function startCountdownTimer() {
+      if (timerInterval) clearInterval(timerInterval);
+      timerRemaining = questionTimeLimit;
+      updateTimerDisplay();
+
+      timerInterval = setInterval(() => {
+        timerRemaining--;
+        updateTimerDisplay();
+
+        if (timerRemaining <= 0) {
+          clearInterval(timerInterval);
+          handleTimeOutAutoSkip();
+        }
+      }, 1000);
+    }
+
+    function updateTimerDisplay() {
+      const mins = Math.floor(timerRemaining / 60);
+      const secs = timerRemaining % 60;
+      const formatted = `${mins < 10 ? '0' : ''}${mins}:${secs < 10 ? '0' : ''}${secs}`;
+      const pill = document.getElementById('session-timer-pill');
+      pill.textContent = `⏱ ${formatted} Remaining`;
+
+      if (timerRemaining <= 15) {
+        pill.classList.add('urgent');
+      } else {
+        pill.classList.remove('urgent');
+      }
+    }
+
+    function handleTimeOutAutoSkip() {
+      alert("⏱ Time's up for this question! Auto-marking as 'Skipped' and moving forward.");
+      skipCurrentQuestion(true);
+    }
+
+    function skipCurrentQuestion(isTimedOut = false) {
+      if (timerInterval) clearInterval(timerInterval);
+      if (isRecording) toggleMicRecording();
+
+      const q = sessionQuestions[currentQIndex];
+      sessionResults.push({
+        question: q.question,
+        category: q.category || 'Technical',
+        resumeSource: q.resumeSource || 'Resume',
+        answer: isTimedOut ? '[Question Skipped: Time Limit Reached]' : '[Question Skipped by User]',
+        isSkipped: true,
+        overallScore: 0,
+        answerStrength: 0,
+        feedback: isTimedOut
+          ? "Question timed out before submission. In technical rounds, pacing is critical—aim to deliver key points within 90 seconds."
+          : "Question skipped without answering. Skipped questions reduce overall score.",
+        missingPoints: "No answer provided.",
+        modelAnswer: q.hint || "Deliver a structured answer beginning with architectural design and ending with performance metrics."
+      });
+
+      if (currentQIndex + 1 < sessionQuestions.length) {
+        currentQIndex++;
+        loadCurrentQuestion();
+      } else {
+        renderReportView();
+      }
+    }
+
+    function updateWordCount() {
+      const val = document.getElementById('session-answer-input').value.trim();
+      const count = val ? val.split(/\s+/).length : 0;
+      document.getElementById('word-count-num').textContent = count;
+    }
+
+    function clearAnswerInput() {
+      document.getElementById('session-answer-input').value = '';
+      document.getElementById('word-count-num').textContent = '0';
+    }
+
+    function toggleHint() {
+      document.getElementById('session-hint-text').classList.toggle('hidden');
+    }
+
+    function speakCurrentQuestion() {
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+        const text = document.getElementById('session-q-text').textContent;
+        const utter = new SpeechSynthesisUtterance(text);
+        utter.rate = 0.95;
+        window.speechSynthesis.speak(utter);
+      }
+    }
+
+    // Speech Recognition
+    function initSpeechRecognition() {
+      const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (SpeechRec) {
+        recognition = new SpeechRec();
+        recognition.continuous = true;
+        recognition.interimResults = true;
+        recognition.lang = 'en-US';
+        recognition.onresult = (e) => {
+          let text = '';
+          for (let i = e.resultIndex; i < e.results.length; i++) {
+            text += e.results[i][0].transcript + ' ';
+          }
+          const input = document.getElementById('session-answer-input');
+          input.value = (input.value ? input.value.trim() + ' ' : '') + text.trim();
+          updateWordCount();
+        };
+        recognition.onend = () => {
+          isRecording = false;
+          updateMicUI();
+        };
+      }
+    }
+
+    function toggleMicRecording() {
+      if (!recognition) {
+        alert('Voice Speech Recognition is supported in Chrome & Edge browsers. You can also type your answer!');
+        return;
+      }
+      if (isRecording) {
+        recognition.stop();
+        isRecording = false;
+      } else {
+        try {
+          recognition.start();
+          isRecording = true;
+        } catch (e) {
+          console.warn(e);
+        }
+      }
+      updateMicUI();
+    }
+
+    function updateMicUI() {
+      const btn = document.getElementById('btn-record-mic');
+      const eq = document.getElementById('equalizer-wrapper');
+      if (isRecording) {
+        btn.classList.add('recording');
+        btn.textContent = 'Stop Mic';
+        eq.classList.remove('hidden');
+      } else {
+        btn.classList.remove('recording');
+        btn.textContent = '🎙️ Speak Answer (Mic)';
+        eq.classList.add('hidden');
+      }
+    }
+
+    // Submit Answer & Grade
+    async function submitAnswerForGrading() {
+      const ans = document.getElementById('session-answer-input').value.trim();
+      if (!ans) {
+        alert('Please speak or type your answer before submitting!');
+        return;
+      }
+
+      if (timerInterval) clearInterval(timerInterval);
+      if (isRecording) toggleMicRecording();
+
+      const submitBtn = document.getElementById('btn-submit-answer');
+      submitBtn.textContent = 'Evaluating & Grading...';
+      submitBtn.disabled = true;
+
+      const q = sessionQuestions[currentQIndex];
+      let evalData = null;
+
+      try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 3500);
+
+        const res = await fetch('http://localhost:5000/api/interview/evaluate', {
+          method: 'POST',
+          signal: controller.signal,
+          headers: { 'Content-Type': 'application/json', ...(apiKey ? { 'x-gemini-api-key': apiKey } : {}) },
+          body: JSON.stringify({
+            sessionId: currentSessionId,
+            questionId: q.dbId,
+            question: q.question,
+            category: q.category,
+            resumeSource: q.resumeSource,
+            role: document.getElementById('setup-role').value,
+            targetCompany: document.getElementById('setup-company').value,
+            answer: ans
+          })
+        });
+        clearTimeout(timeoutId);
+
+        if (res.ok) {
+          const data = await res.json();
+          if (data.success && data.evaluation) {
+            evalData = data.evaluation;
+          }
+        }
+      } catch (e) {}
+
+      if (!evalData) {
+        const words = ans.split(/\s+/).length;
+        let score = words > 60 ? 8.5 : words > 35 ? 7.5 : words > 15 ? 6 : 4;
+        let strength = Math.min(95, Math.round(score * 10 + (words > 40 ? 5 : 0)));
+        evalData = {
+          score,
+          answerStrength: strength,
+          feedback: `Good response! You addressed the core problem with ${words} words and demonstrated hands-on technical reasoning.`,
+          missingPoints: words < 35 ? "Mention concrete metrics (e.g. latency, error rates, throughput) and why alternative approaches were rejected." : "None observed.",
+          modelAnswer: `For '${q.question}', a strong answer starts with architecture overview, specifies exact technology choices (e.g. Socket.io, Redis TTL), and quantifies performance improvements.`
+        };
+      }
+
+      currentEvaluation = evalData;
+      submitBtn.textContent = 'Submit & Evaluate Answer';
+      submitBtn.disabled = false;
+
+      document.getElementById('session-action-row').classList.add('hidden');
+
+      const strength = evalData.answerStrength || Math.round((evalData.score || 7) * 10);
+      document.getElementById('eval-strength-circle').textContent = `${strength}%`;
+      document.getElementById('eval-strength-label').textContent = `Answer Strength: ${strength}%`;
+      document.getElementById('eval-score-text').textContent = `Score: ${(evalData.score || 7).toFixed(1)} / 10`;
+
+      document.getElementById('eval-feedback-text').textContent = evalData.feedback;
+      document.getElementById('eval-missing-text').textContent = evalData.missingPoints || "None";
+      document.getElementById('eval-model-answer').textContent = evalData.modelAnswer;
+
+      const nextBtn = document.getElementById('btn-next-question');
+      nextBtn.textContent = (currentQIndex + 1 < sessionQuestions.length) ? 'Next Question →' : 'Complete & View Scorecard 🎉';
+
+      document.getElementById('session-eval-card').classList.remove('hidden');
+    }
+
+    function proceedToNextQuestion() {
+      const q = sessionQuestions[currentQIndex];
+      const ans = document.getElementById('session-answer-input').value.trim();
+
+      sessionResults.push({
+        question: q.question,
+        category: q.category || 'Technical',
+        resumeSource: q.resumeSource || 'Resume',
+        answer: ans,
+        isSkipped: false,
+        overallScore: currentEvaluation.score || 7,
+        answerStrength: currentEvaluation.answerStrength || 70,
+        feedback: currentEvaluation.feedback,
+        missingPoints: currentEvaluation.missingPoints,
+        modelAnswer: currentEvaluation.modelAnswer
+      });
+
+      if (currentQIndex + 1 < sessionQuestions.length) {
+        currentQIndex++;
+        loadCurrentQuestion();
+      } else {
+        renderReportView();
+      }
+    }
+
+    // Report View
+    async function renderReportView() {
+      const totalScore = sessionResults.reduce((acc, c) => acc + (c.overallScore || 0), 0);
+      const avgScore = (totalScore / sessionResults.length).toFixed(1);
+
+      const totalStrength = sessionResults.reduce((acc, c) => acc + (c.answerStrength || 0), 0);
+      const avgStrength = Math.round(totalStrength / sessionResults.length);
+
+      document.getElementById('report-title').textContent = `${document.getElementById('setup-company').value} · ${document.getElementById('setup-role').value} Report`;
+      document.getElementById('report-score').textContent = `${avgScore} / 10`;
+      document.getElementById('report-strength').textContent = `${avgStrength}%`;
+      document.getElementById('report-count').textContent = `${sessionResults.filter(r => !r.isSkipped).length} / ${sessionResults.length}`;
+
+      // Finalize session in SQLite database
+      if (currentSessionId) {
+        try {
+          await fetch('http://localhost:5000/api/interview/finish', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ sessionId: currentSessionId, overallScore: avgScore, answerStrength: avgStrength })
+          });
+        } catch (e) {}
+      }
+
+      const list = document.getElementById('report-questions-list');
+      list.innerHTML = sessionResults.map((r, i) => `
+        <div style="background: #0e111a; border: 1px solid var(--border); border-radius: 10px; padding: 18px; margin-bottom: 14px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-wrap: wrap; gap: 8px;">
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span class="category-badge ${r.category === 'Behavioral' ? 'cat-star' : r.category === 'Resume-Gap' ? 'cat-gap' : 'cat-tech'}">
+                ${r.category}
+              </span>
+              <strong style="color: #fff; font-size: 0.95rem;">Q${i+1}: ${r.question}</strong>
+            </div>
+            <span style="font-weight: 800; font-size: 0.88rem; color: #38bdf8;">
+              Score: ${r.overallScore} / 10 (${r.answerStrength}%)
+            </span>
+          </div>
+
+          <div style="font-size: 0.78rem; color: #38bdf8; font-weight: 600; margin-bottom: 8px;">
+            📄 Source: ${r.resumeSource}
+          </div>
+
+          <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 6px;">
+            <strong>Candidate Answer:</strong> ${r.answer}
+          </p>
+          <p style="font-size: 0.85rem; color: #cbd5e1; margin-bottom: 8px;">
+            <strong>AI Feedback:</strong> ${r.feedback}
+          </p>
+          ${r.missingPoints && r.missingPoints !== 'None' ? `
+            <div style="background: rgba(239, 68, 68, 0.08); border-left: 3px solid var(--danger); padding: 8px 12px; font-size: 0.82rem; color: #fca5a5; margin-bottom: 8px; border-radius: 4px;">
+              <strong>Missing Points:</strong> ${r.missingPoints}
+            </div>
+          ` : ''}
+          <div style="background: rgba(6, 182, 212, 0.08); border-left: 3px solid var(--accent); padding: 8px 12px; font-size: 0.82rem; color: #94a3b8; border-radius: 4px;">
+            <strong style="color: var(--accent);">Ideal Model Answer:</strong> ${r.modelAnswer}
+          </div>
+        </div>
+      `).join('');
+
+      fetchDatabaseHistory();
+      navigateTo('report');
+    }
+
+    // Database History & Analytics
+    async function fetchDatabaseHistory() {
+      try {
+        const res = await fetch('http://localhost:5000/api/interview/history');
+        const data = await res.json();
+        if (data.success && data.sessions) {
+          document.getElementById('history-count').textContent = data.sessions.length;
+          renderDatabaseHistory(data.sessions);
+          return;
+        }
+      } catch (err) {}
+
+      document.getElementById('history-container').innerHTML = `
+        <div style="text-align: center; color: var(--text-muted); padding: 36px 0;">
+          Mock interview records are permanently saved in <strong>backend/database.sqlite</strong>.<br />
+          Ensure backend is running on <code>http://localhost:5000</code> to query records.
+        </div>
+      `;
+    }
+
+    function renderDatabaseHistory(sessions) {
+      const container = document.getElementById('history-container');
+      if (sessions.length === 0) {
+        container.innerHTML = `<div style="text-align: center; color: var(--text-muted); padding: 40px 0;">No sessions stored in SQLite database yet. Complete your first mock interview!</div>`;
+        return;
+      }
+
+      container.innerHTML = sessions.map(item => `
+        <div class="card" style="display: flex; justify-content: space-between; align-items: center; padding: 16px 20px; margin-bottom: 12px; flex-wrap: wrap; gap: 10px;">
+          <div>
+            <div style="font-weight: 700; color: #fff; font-size: 1rem;">
+              ${item.target_company || 'Tech Company'} · ${item.role}
+              <span style="font-size: 0.72rem; color: var(--accent); font-family: monospace;">(DB Record #${item.id})</span>
+            </div>
+            <div style="font-size: 0.8rem; color: var(--text-dim);">
+              ${item.created_at || 'Recent'} · ${item.total_questions || 3} Questions · Limit: ${item.time_limit_seconds || 90}s
+            </div>
+          </div>
+          <div style="display: flex; align-items: center; gap: 14px;">
+            <div style="text-align: right;">
+              <div style="font-weight: 800; color: #34d399; font-size: 1.05rem;">${item.answer_strength || Math.round((item.overall_score || 7)*10)}% Strength</div>
+              <div style="font-size: 0.75rem; color: var(--text-dim);">${item.overall_score || 7} / 10 Score</div>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    async function fetchWeakAreas() {
+      try {
+        const res = await fetch('http://localhost:5000/api/interview/analytics/weak-areas');
+        const data = await res.json();
+        if (data.success && data.weakAreas && data.weakAreas.length > 0) {
+          const list = document.getElementById('weak-areas-list');
+          list.innerHTML = data.weakAreas.map(w => `
+            <span class="chip" style="border-color: rgba(245, 158, 11, 0.4); color: #fde68a;">
+              ${w.topic} (${w.count}x lower score)
+            </span>
+          `).join('');
+        }
+      } catch (e) {}
+    }
+
+    async function clearDatabaseHistory() {
+      if (confirm('Clear all interview session records from backend/database.sqlite?')) {
+        try {
+          await fetch('http://localhost:5000/api/interview/history', { method: 'DELETE' });
+          fetchDatabaseHistory();
+        } catch (e) {}
+      }
+    }
+
+    // Modal & API Key
+    function openApiModal() {
+      document.getElementById('input-api-key').value = apiKey;
+      document.getElementById('modal-apikey').classList.remove('hidden');
+    }
+    function closeApiModal() {
+      document.getElementById('modal-apikey').classList.add('hidden');
+    }
+    function saveApiKey() {
+      const val = document.getElementById('input-api-key').value.trim();
+      apiKey = val;
+      if (val) localStorage.setItem('gemini_api_key', val);
+      else localStorage.removeItem('gemini_api_key');
+      updateApiPill();
+      closeApiModal();
+    }
+    function setDemoMode() {
+      apiKey = '';
+      localStorage.removeItem('gemini_api_key');
+      updateApiPill();
+      closeApiModal();
+    }
+    function updateApiPill() {
+      const pill = document.getElementById('api-pill-btn');
+      const text = document.getElementById('api-pill-text');
+      if (apiKey) {
+        pill.className = "api-pill live";
+        text.textContent = "Gemini AI Active";
+      } else {
+        pill.className = "api-pill";
+        text.textContent = "Demo Mode (Add Key)";
+      }
+    }
+  </script>
+</body>
+</html>

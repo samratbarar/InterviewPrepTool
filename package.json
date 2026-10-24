@@ -1,0 +1,11 @@
+{
+  "name": "ai-interview-prep-root",
+  "version": "1.0.0",
+  "description": "AI Interview Preparation Tool - Mini Project Prototype 1",
+  "scripts": {
+    "start": "node run-prototype.js",
+    "server": "cd backend && node server.js",
+    "client": "cd frontend && npm.cmd run dev",
+    "build": "cd frontend && npm.cmd run build"
+  }
+}
